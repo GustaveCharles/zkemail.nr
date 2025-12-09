@@ -24,7 +24,7 @@ impl RSAPubkey<KEY_LIMBS_1024> {
         signature: [Field; KEY_LIMBS_1024],
     ) -> [u8; 32] {
         // hash the header
-        let header_hash = sha256_var(header.storage(), header.len() as u64);
+        let header_hash = sha256_var(header.storage(), header.len() as u32);
 
         let params: BigNumParams<KEY_LIMBS_1024, 1024> = BigNumParams::new(
             false,
@@ -77,7 +77,7 @@ impl RSAPubkey<KEY_LIMBS_2048> {
         signature: [Field; KEY_LIMBS_2048],
     ) -> [u8; 32] {
         // hash the header
-        let header_hash = sha256_var(header.storage(), header.len() as u64);
+        let header_hash = sha256_var(header.storage(), header.len() as u32);
 
         let params: BigNumParams<KEY_LIMBS_2048, 2048> = BigNumParams::new(
             false,
