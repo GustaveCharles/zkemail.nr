@@ -18,8 +18,8 @@ pub global MAX_DKIM_HEADER_FIELD_LENGTH: u32 = 300; // kinda arbitrary but gives
 pub global MAX_EMAIL_ADDRESS_LENGTH: u32 = 320; // derived via (https://datatracker.ietf.org/doc/html/rfc5321#section-4.5.3.1.1)
 
 pub struct Sequence {
-    index: u32,
-    length: u32,
+    pub index: u32,
+    pub length: u32,
 }
 
 impl Sequence {
