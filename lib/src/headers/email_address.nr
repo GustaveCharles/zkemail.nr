@@ -55,14 +55,16 @@ pub fn parse_email_address<let MAX_HEADER_LENGTH: u32>(
     }
     // check the email address and assign
     let mut email_address: BoundedVec<u8, MAX_EMAIL_ADDRESS_LENGTH> = BoundedVec::new();
-    for i in 0..email_address_sequence.length {
+    for i in 0..MAX_EMAIL_ADDRESS_LENGTH {
         let index = email_address_sequence.index + i;
-        let letter = header.get_unchecked(index);
-        assert(
-            EMAIL_ADDRESS_CHAR_TABLE[letter as u32] == 1,
-            "Email address must only contain acceptable characters",
-        );
-        email_address.push(letter);
+        if index < email_address_sequence.end_index() {
+            let letter = header.get_unchecked(index);
+            assert(
+                EMAIL_ADDRESS_CHAR_TABLE[letter as u32] == 1,
+                "Email address must only contain acceptable characters",
+            );
+             email_address.push(letter);
+        }
     }
     // todo: should probably introduce a check for @
     email_address
