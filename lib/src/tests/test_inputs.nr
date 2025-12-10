@@ -160,6 +160,10 @@ pub(crate) mod EmailLarge {
     pub(crate) global TO_HEADER_SEQUENCE: Sequence = Sequence { index: 244, length: 21 };
     pub(crate) global TO_ADDRESS_SEQUENCE: Sequence = Sequence { index: 247, length: 18 };
 
+    // subject field inputs
+    pub(crate) global SUBJECT_HEADER_SEQUENCE: Sequence = Sequence { index: 132, length: 15 };
+    pub(crate) global SUBJECT_TEXT_SEQUENCE: Sequence = Sequence { index: 140, length: 7 };
+
     // mutate inputs
 
     pub fn tampered_header() -> BoundedVec<u8, EMAIL_LARGE_MAX_HEADER_LENGTH> {

@@ -2,6 +2,7 @@ use crate::{CR, LF, Sequence};
 
 pub mod body_hash;
 pub mod email_address;
+pub mod subject_field;
 
 /**
  * Constrain a sequence in a header to be within the correct bounds

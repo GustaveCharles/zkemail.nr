@@ -442,3 +442,74 @@ mod test_address_extraction {
         );
     }
 }
+
+mod test_subject_extraction {
+    use crate::{
+        headers::subject_field::get_subject_header_value,
+        tests::test_inputs::EmailLarge,
+        MAX_TEXT_LENGTH,
+    };
+
+    #[test]
+    fn test_subject_extraction() {
+        let subject_field_name = comptime { "subject".as_bytes() };
+        let subject = get_subject_header_value(
+            EmailLarge::HEADER,
+            EmailLarge::SUBJECT_HEADER_SEQUENCE,
+            EmailLarge::SUBJECT_TEXT_SEQUENCE,
+            subject_field_name,
+        );
+        let expected_subject: BoundedVec<u8, MAX_TEXT_LENGTH> =
+            BoundedVec::from_array("Bitcoin".as_bytes());
+        assert_eq(
+            expected_subject,
+            subject,
+            "Subject does not match expected subject",
+        );
+    }
+
+    #[test(should_fail_with = "Header text sequence out of bounds")]
+    fn test_text_sequence_starts_before_header_field() {
+        let subject_field_name = comptime { "subject".as_bytes() };
+        // make text sequence start before the header field sequence
+        let mut bad_text_sequence = EmailLarge::SUBJECT_TEXT_SEQUENCE;
+        bad_text_sequence.index = EmailLarge::SUBJECT_HEADER_SEQUENCE.index - 1;
+        let _ = get_subject_header_value(
+            EmailLarge::HEADER,
+            EmailLarge::SUBJECT_HEADER_SEQUENCE,
+            bad_text_sequence,
+            subject_field_name,
+        );
+    }
+
+    #[test(should_fail_with = "Header text sequence out of bounds")]
+    fn test_text_sequence_ends_after_header_field() {
+        let subject_field_name = comptime { "subject".as_bytes() };
+        // make text sequence end after the header field sequence
+        let mut bad_text_sequence = EmailLarge::SUBJECT_TEXT_SEQUENCE;
+        bad_text_sequence.length = EmailLarge::SUBJECT_HEADER_SEQUENCE.end_index()
+            - bad_text_sequence.index
+            + 1;
+        let _ = get_subject_header_value(
+            EmailLarge::HEADER,
+            EmailLarge::SUBJECT_HEADER_SEQUENCE,
+            bad_text_sequence,
+            subject_field_name,
+        );
+    }
+
+    #[test(should_fail_with = "Header text must only contain acceptable characters")]
+    fn test_invalid_character_in_subject() {
+        let subject_field_name = comptime { "subject".as_bytes() };
+        // create a header with an invalid character in the subject
+        let mut tampered_header = EmailLarge::HEADER;
+        // replace 'B' in "Bitcoin" with an invalid character (e.g., null byte)
+        tampered_header.set(140, 0);
+        let _ = get_subject_header_value(
+            tampered_header,
+            EmailLarge::SUBJECT_HEADER_SEQUENCE,
+            EmailLarge::SUBJECT_TEXT_SEQUENCE,
+            subject_field_name,
+        );
+    }
+}
