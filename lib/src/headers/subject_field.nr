@@ -56,16 +56,18 @@ pub fn parse_subject<let MAX_HEADER_LENGTH: u32>(
     
     // check the email address and assign
     let mut text: BoundedVec<u8, MAX_TEXT_LENGTH> = BoundedVec::new();
-    for i in 0..text_sequence.length {
+    for i in 0..MAX_TEXT_LENGTH {
         let index = text_sequence.index + i;
-        let letter = header.get_unchecked(index);
+        if index < text_sequence.end_index() {
+            let letter = header.get_unchecked(index);
 
-        assert(
-            TEXT_CHAR_TABLE[letter as u32] == 1,
-            "Header text must only contain acceptable characters",
-        );
+            assert(
+                TEXT_CHAR_TABLE[letter as u32] == 1,
+                "Header text must only contain acceptable characters",
+            );
 
-        text.push(letter);
+            text.push(letter);
+        }
     }
     text
 }
